@@ -658,3 +658,77 @@ class Character extends FlxSprite
 		animOffsets[name] = [x, y];
 	}
 }
+
+                              case 'tankman':
+				tex = Paths.getSparrowAtlas('tankman/tankmanCaptain');
+				frames = tex;
+				animation.addByPrefix('idle', "Tankman Idle Dance", 24);
+				animation.addByPrefix('oldSingUP', 'Tankman UP note ', 24, false);
+				animation.addByPrefix('singUP', 'Tankman UP note ', 24, false);
+				animation.addByPrefix('oldSingDOWN', 'Tankman DOWN note ', 24, false);
+				animation.addByPrefix('singDOWN', 'Tankman DOWN note ', 24, false);
+				animation.addByPrefix('singLEFT', 'Tankman Right Note ', 24, false);
+				animation.addByPrefix('singRIGHT', 'Tankman Note Left ', 24, false);
+
+				animation.addByPrefix('ughAnim', 'TANKMAN UGH', 24, false);
+				animation.addByPrefix('prettyGoodAnim', 'PRETTY GOOD', 24, false);
+
+				addOffset('idle');
+				addOffset("singUP", 24, 56);
+				addOffset("oldSingUP", 24, 56);
+				addOffset("singRIGHT", -1, -7);
+				addOffset("singLEFT", 100, -14);
+				addOffset("singDOWN", 98, -90);
+				addOffset("oldSingDOWN", 98, -90);
+				//addOffset("ughAnim", 45, 0);
+				addOffset("prettyGoodAnim", 45, 20);
+				playAnim('idle');
+				flipX = true;
+		}
+
+		dance();
+
+		if (isPlayer)
+		{
+			flipX = !flipX;
+
+			// Doesn't flip for BF, since his are already in the right place???
+			if (!curCharacter.startsWith('bf'))
+			{
+				// var animArray
+				var oldRight = animation.getByName('singRIGHT').frames;
+				animation.getByName('singRIGHT').frames = animation.getByName('singLEFT').frames;
+				animation.getByName('singLEFT').frames = oldRight;
+
+				// IF THEY HAVE MISS ANIMATIONS??
+				if (animation.getByName('singRIGHTmiss') != null)
+				{
+					var oldMiss = animation.getByName('singRIGHTmiss').frames;
+					animation.getByName('singRIGHTmiss').frames = animation.getByName('singLEFTmiss').frames;
+					animation.getByName('singLEFTmiss').frames = oldMiss;
+				}
+			}
+		}
+	}
+
+	override function update(elapsed:Float)
+	{
+		if (!curCharacter.startsWith('bf'))
+		{
+			if (animation.curAnim.name.startsWith('sing'))
+			{
+				holdTimer += elapsed;
+			}
+
+			var dadVar:Float = 4;
+
+			if (curCharacter == 'dad')
+				dadVar = 6.1;
+			if (holdTimer >= Conductor.stepCrochet * dadVar * 0.001)
+			{
+				dance();
+				holdTimer = 0;
+			}
+		}
+
+		switch (curCharacter)
